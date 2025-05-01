@@ -18,11 +18,11 @@ export default function EmployeeView() {
     queryKey: ["employee"],
     queryFn: fetchPositions,
     refetchOnWindowFocus: true,
+    staleTime: 0,
   });
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
 
-  console.log(data);
   return (
     <div className="p-6">
       <h1 className="text-3xl font-bold mb-3">Employees</h1>
