@@ -70,7 +70,6 @@ export default function PositionFormCreate({
       setLoading(false);
     }
   };
-
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>

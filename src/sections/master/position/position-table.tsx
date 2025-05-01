@@ -3,6 +3,8 @@ import { DataTableColumnHeader } from "@/components/custom/data-table/data-table
 import { DataTableRowActions } from "@/components/custom/data-table/data-table-row-actions";
 import { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
+import { toast } from "sonner";
+import axios from "axios";
 
 type PositionProps = {
   id: string;
@@ -34,8 +36,28 @@ const levels: LevelProps[] = [
   },
 ];
 
-export default function PositionTable({ data }: { data: PositionProps[] }) {
-  // Define columns
+export default function PositionTable({
+  data,
+  onSuccess,
+}: {
+  data: PositionProps[];
+  onSuccess: () => void;
+}) {
+  const handleDelete = async (id: string) => {
+    try {
+      const { data } = await axios.delete(
+        `${process.env.HOST_API_URL}/v1/position/${id}`
+      );
+      if (data.status === "OK") {
+        toast.success(data.message);
+        onSuccess?.();
+      }
+    } catch (error) {
+      console.error("Submit error:", error);
+      toast.error("Something went wrong while deleting.");
+    }
+  };
+
   const columns: ColumnDef<PositionProps>[] = [
     {
       id: "no",
@@ -100,7 +122,7 @@ export default function PositionTable({ data }: { data: PositionProps[] }) {
         <DataTableRowActions
           row={row}
           onEdit={(task) => console.log("Edit", task)}
-          onDelete={(task) => console.log("Delete", task)}
+          onDelete={(task) => handleDelete(task.id)}
         />
       ),
     },

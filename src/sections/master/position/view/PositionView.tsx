@@ -27,7 +27,7 @@ export default function PositionView() {
           <PositionFormCreate onSuccess={() => refetch()} />
         </div>
 
-        <PositionTable data={data.data} />
+        <PositionTable data={data.data} onSuccess={() => refetch()} />
       </div>
     </div>
   );
