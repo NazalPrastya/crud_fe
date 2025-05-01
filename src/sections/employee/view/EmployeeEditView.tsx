@@ -69,12 +69,12 @@ export default function EmployeeEditView({
   }, [dataEmployee, form]);
 
   const { data: dataPositions } = useFetchPositions();
-  const { mutate: createEmployee, isPending: createEmployeeIsLoading } =
+  const { mutate: updateEmployee, isPending: updateEmployeeIsLoading } =
     useUpdateEmployee({
       id: id,
       onSuccess: () => {
-        toast.success("Employee updated Successfully");
         refetch();
+        toast.success("Employee updated Successfully");
       },
       onError: (error: unknown) => {
         if (error instanceof Error) {
@@ -100,14 +100,14 @@ export default function EmployeeEditView({
   const handleSubmit = (values: StoreEmployeeSchema) => {
     const formData = new FormData();
     Object.entries(values).forEach(([key, value]) => {
-      if (key === "image" && value instanceof File) {
+      if (key === "image") {
         formData.append(key, value[0]);
       } else {
         formData.append(key, String(value));
       }
     });
 
-    createEmployee(formData);
+    updateEmployee(formData);
   };
 
   return (
@@ -122,7 +122,7 @@ export default function EmployeeEditView({
           <div className="flex flex-col md:flex-row gap-x-2">
             <div className="w-full md:w-1/3 flex justify-center items-center">
               <Avatar className="w-full h-full content-center">
-                <AvatarImage src="https://github.com/shadcn.png" />
+                <AvatarImage src={dataEmployee?.data?.data?.image} />
                 <AvatarFallback>CN</AvatarFallback>
               </Avatar>
             </div>
@@ -250,7 +250,7 @@ export default function EmployeeEditView({
                       </FormItem>
                     )}
                   />
-                  <Button type="submit" disabled={createEmployeeIsLoading}>
+                  <Button type="submit" disabled={updateEmployeeIsLoading}>
                     SUBMIT
                   </Button>
                 </form>
