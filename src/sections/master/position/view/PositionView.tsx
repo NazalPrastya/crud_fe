@@ -2,6 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import PositionTable from "../position-table";
+import PositionFormCreate from "../position-form-create";
 
 async function fetchPositions() {
   const res = await fetch(`${process.env.HOST_API_URL}/v1/position`);
@@ -11,7 +12,7 @@ async function fetchPositions() {
 }
 
 export default function PositionView() {
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["positions"],
     queryFn: fetchPositions,
   });
@@ -23,7 +24,7 @@ export default function PositionView() {
       <h1 className="text-3xl font-bold mb-3">Position</h1>
       <div className="mt-6">
         <div className="flex items-center justify-end gap-x-3 mb-4">
-          {/* <EmployeeForm /> */}
+          <PositionFormCreate onSuccess={() => refetch()} />
         </div>
 
         <PositionTable data={data.data} />
