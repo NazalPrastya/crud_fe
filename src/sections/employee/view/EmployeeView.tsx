@@ -14,7 +14,7 @@ async function fetchPositions() {
 }
 
 export default function EmployeeView() {
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["positions"],
     queryFn: fetchPositions,
     refetchOnWindowFocus: true,
@@ -44,7 +44,7 @@ export default function EmployeeView() {
             <Link href="/dashboard/employee/create">Add Employee</Link>
           </Button>
         </div>
-        <EmployeeTable data={data.data.data} />
+        <EmployeeTable data={data.data.data} onSuccess={() => refetch()} />
       </div>
     </div>
   );

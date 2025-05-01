@@ -5,6 +5,9 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
 import { Employee } from "./employee-type";
 import { format } from "date-fns";
+import { useRouter } from "next/navigation";
+import { axiosInstance } from "@/lib/axios";
+import { toast } from "sonner";
 
 type LevelVariant = "green" | "yellow" | "default" | "destructive" | "outline";
 
@@ -32,7 +35,27 @@ const levels: Level[] = [
   },
 ];
 
-export default function EmployeeTable({ data }: { data: Employee[] }) {
+export default function EmployeeTable({
+  data,
+  onSuccess,
+}: {
+  data: Employee[];
+  onSuccess: () => void;
+}) {
+  const router = useRouter();
+
+  const handleDelete = async (id: string) => {
+    try {
+      const { data } = await axiosInstance.delete(`/v1/employee/${id}`);
+      if (data.status === "OK") {
+        toast.success(data.message);
+        onSuccess?.();
+      }
+    } catch (error) {
+      console.error("Submit error:", error);
+      toast.error("Something went wrong while deleting.");
+    }
+  };
   const columns: ColumnDef<Employee>[] = [
     {
       id: "no",
@@ -114,8 +137,10 @@ export default function EmployeeTable({ data }: { data: Employee[] }) {
       cell: ({ row }) => (
         <DataTableRowActions
           row={row}
-          onEdit={(task) => console.log("Edit", task)}
-          onDelete={(task) => console.log("Delete", task)}
+          onEdit={(employee) =>
+            router.push(`/dashboard/employee/${employee.id}`)
+          }
+          onDelete={(employee) => handleDelete(employee.id)}
         />
       ),
     },

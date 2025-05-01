@@ -15,7 +15,8 @@ export const storeEmployeeSchema = z.object({
     .refine(
       (files) => files?.[0]?.size <= 5_000_000, // 5MB
       "Max file size is 5MB"
-    ),
+    )
+    .optional(),
   dateBirth: z.string().min(1, { message: "Date of birth is required" }).date(),
   positionId: z.string().min(1, { message: "Position is required" }),
   dateJoin: z.string().min(1, { message: "Date join is required" }).date(),
