@@ -92,9 +92,7 @@ export default function PositionTable({
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Name" />
       ),
-      cell: ({ row }) => (
-        <div className="max-w-[500px]">{row.getValue("name")}</div>
-      ),
+      cell: ({ row }) => <div>{row.getValue("name")}</div>,
     },
     {
       accessorKey: "desc",
@@ -102,7 +100,7 @@ export default function PositionTable({
         <DataTableColumnHeader column={column} title="Description" />
       ),
       cell: ({ row }) => (
-        <div className="max-w-[500px]">{row.getValue("desc")}</div>
+        <div className="max-w-[200px] truncate">{row.getValue("desc")}</div>
       ),
     },
     {
