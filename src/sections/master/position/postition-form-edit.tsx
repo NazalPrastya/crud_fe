@@ -28,37 +28,56 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  storePositionSchema,
-  StorePositionSchema,
-} from "./form/store-position";
+
 import { Textarea } from "@/components/ui/textarea";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { axiosInstance } from "@/lib/axios";
+import {
+  updatePositionSchema,
+  UpdatePositionSchema,
+} from "./form/update-position";
 
-interface PositionFormCreateProps {
+interface PositionFormUpdateProps {
+  initialValues: UpdatePositionSchema;
   onSuccess?: () => void;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 }
 
-export default function PositionFormCreate({
+export default function PositionFormEdit({
+  initialValues,
   onSuccess,
-}: PositionFormCreateProps) {
+  open,
+  onOpenChange,
+}: PositionFormUpdateProps) {
   const [loading, setLoading] = useState<boolean>(false);
-  const [open, setOpen] = useState(false);
-  const form = useForm<StorePositionSchema>({
-    resolver: zodResolver(storePositionSchema),
+  const form = useForm<UpdatePositionSchema>({
+    resolver: zodResolver(updatePositionSchema),
   });
 
-  const handleSubmit = async (values: StorePositionSchema) => {
+  useEffect(() => {
+    if (initialValues) {
+      form.reset({
+        id: initialValues.id,
+        name: initialValues.name,
+        level: initialValues.level,
+        desc: initialValues.desc,
+      });
+    }
+  }, [initialValues, form]);
+
+  const handleSubmit = async (values: UpdatePositionSchema) => {
     setLoading(true);
     try {
-      const { data } = await axiosInstance.post(`/v1/position`, values);
-      console.log(data);
+      const { data } = await axiosInstance.put(
+        `/v1/position/${values.id}`,
+        values
+      );
       if (data.status === "OK") {
         toast.success(data.message);
         form.reset();
-        setOpen(false);
+        onOpenChange(false);
         onSuccess?.();
       }
     } catch (error) {
@@ -69,13 +88,13 @@ export default function PositionFormCreate({
     }
   };
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
-        <Button variant="default">Add Position</Button>
+        <Button variant="default">Update Position</Button>
       </DialogTrigger>
       <DialogContent className="max-w-[800px] max-h-[600px] overflow-y-auto flex flex-col">
         <DialogHeader className="sticky top-0 z-10  py-4 ">
-          <DialogTitle>Add Position</DialogTitle>
+          <DialogTitle>Update Position</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form

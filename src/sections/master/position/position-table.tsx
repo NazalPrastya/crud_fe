@@ -4,7 +4,9 @@ import { DataTableRowActions } from "@/components/custom/data-table/data-table-r
 import { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import axios from "axios";
+import { axiosInstance } from "@/lib/axios";
+import { useState } from "react";
+import PositionFormEdit from "./postition-form-edit";
 
 type PositionProps = {
   id: string;
@@ -43,11 +45,13 @@ export default function PositionTable({
   data: PositionProps[];
   onSuccess: () => void;
 }) {
+  const [selectedPosition, setSelectedPosition] =
+    useState<PositionProps | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
   const handleDelete = async (id: string) => {
     try {
-      const { data } = await axios.delete(
-        `${process.env.HOST_API_URL}/v1/position/${id}`
-      );
+      const { data } = await axiosInstance.delete(`/v1/position/${id}`);
       if (data.status === "OK") {
         toast.success(data.message);
         onSuccess?.();
@@ -58,6 +62,16 @@ export default function PositionTable({
     }
   };
 
+  const handleEdit = (position: PositionProps) => {
+    setSelectedPosition(position);
+    setIsEditModalOpen(true);
+  };
+
+  const handleEditSuccess = () => {
+    setIsEditModalOpen(false);
+    setSelectedPosition(null);
+    onSuccess?.();
+  };
   const columns: ColumnDef<PositionProps>[] = [
     {
       id: "no",
@@ -115,24 +129,34 @@ export default function PositionTable({
         return value.includes(row.getValue(name));
       },
     },
-
     {
       id: "actions",
       cell: ({ row }) => (
         <DataTableRowActions
           row={row}
-          onEdit={(task) => console.log("Edit", task)}
-          onDelete={(task) => handleDelete(task.id)}
+          onEdit={(position) => handleEdit(position)}
+          onDelete={(position) => handleDelete(position.id)}
         />
       ),
     },
   ];
   return (
-    <DataTable
-      columns={columns}
-      data={data}
-      filterColumn="name"
-      searchPlaceholder="Filter name..."
-    />
+    <>
+      <DataTable
+        columns={columns}
+        data={data}
+        filterColumn="name"
+        searchPlaceholder="Filter name..."
+      />
+
+      {selectedPosition && (
+        <PositionFormEdit
+          initialValues={selectedPosition}
+          onSuccess={handleEditSuccess}
+          open={isEditModalOpen}
+          onOpenChange={setIsEditModalOpen}
+        />
+      )}
+    </>
   );
 }

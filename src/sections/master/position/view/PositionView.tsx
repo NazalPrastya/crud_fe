@@ -3,20 +3,19 @@
 import { useQuery } from "@tanstack/react-query";
 import PositionTable from "../position-table";
 import PositionFormCreate from "../position-form-create";
+import { axiosInstance } from "@/lib/axios";
 
 async function fetchPositions() {
-  const res = await fetch(`${process.env.HOST_API_URL}/v1/position`);
-  console.log("HOST_API:", process.env.HOST_API_URL); // atau sesuai framework
-
-  return res.json();
+  const res = await axiosInstance.get(`/v1/position`);
+  return res.data;
 }
 
 export default function PositionView() {
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["positions"],
     queryFn: fetchPositions,
+    refetchOnWindowFocus: true,
   });
-
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
   return (
