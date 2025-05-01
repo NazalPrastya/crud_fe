@@ -1,7 +1,7 @@
 "use client";
 
 import type * as React from "react";
-import { CheckIcon, PlusCircleIcon } from "lucide-react";
+import { CheckIcon, LucideIcon, PlusCircleIcon } from "lucide-react";
 import type { Column } from "@tanstack/react-table";
 
 import { cn } from "@/lib/utils";
@@ -29,7 +29,7 @@ interface DataTableFacetedFilterProps<TData, TValue> {
   options: {
     label: string;
     value: string;
-    icon?: React.ReactNode;
+    icon?: LucideIcon;
   }[];
 }
 

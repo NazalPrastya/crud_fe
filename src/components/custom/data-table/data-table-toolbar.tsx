@@ -3,7 +3,7 @@
 import type React from "react";
 
 import type { Table } from "@tanstack/react-table";
-import { X } from "lucide-react";
+import { LucideIcon, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,8 +14,8 @@ interface DataTableToolbarProps<TData> {
   table: Table<TData>;
   filterColumn: string;
   searchPlaceholder: string;
-  statuses?: { value: string; label: string; icon?: React.ReactNode }[];
-  priorities?: { value: string; label: string; icon?: React.ReactNode }[];
+  statuses?: { value: string; label: string; icon?: LucideIcon }[];
+  priorities?: { value: string; label: string; icon?: LucideIcon }[];
 }
 
 export function DataTableToolbar<TData>({

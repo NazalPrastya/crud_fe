@@ -15,25 +15,26 @@ async function fetchPositions() {
 
 export default function EmployeeView() {
   const { data, isLoading, error, refetch } = useQuery({
-    queryKey: ["positions"],
+    queryKey: ["employee"],
     queryFn: fetchPositions,
     refetchOnWindowFocus: true,
   });
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
 
+  console.log(data);
   return (
     <div className="p-6">
       <h1 className="text-3xl font-bold mb-3">Employees</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <CardTotal
           title="Total Employee"
-          amount={data.data.meta.total}
+          amount={data?.data?.meta?.total ?? 0}
           icon={Users}
         />
         <CardTotal
           title="Overall Score"
-          amount={data.data.meta.total}
+          amount={data?.data?.meta?.total ?? 0}
           icon={ChartNoAxesCombined}
         />
       </div>
