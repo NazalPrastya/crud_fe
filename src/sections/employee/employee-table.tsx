@@ -4,27 +4,35 @@ import { DataTableRowActions } from "@/components/custom/data-table/data-table-r
 import { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
 import { Employee } from "./employee-type";
+import { format } from "date-fns";
 
-const levels = [
+type LevelVariant = "green" | "yellow" | "default" | "destructive" | "outline";
+
+interface Level {
+  value: string;
+  label: string;
+  variant: LevelVariant;
+}
+
+const levels: Level[] = [
   {
-    value: "Junior",
+    value: "junior",
     label: "Junior",
     variant: "green",
   },
   {
-    value: "Mid",
+    value: "mid",
     label: "Mid",
     variant: "yellow",
   },
   {
-    value: "Senior",
+    value: "senior",
     label: "Senior",
     variant: "default",
   },
 ];
 
 export default function EmployeeTable({ data }: { data: Employee[] }) {
-  // Define columns
   const columns: ColumnDef<Employee>[] = [
     {
       id: "no",
@@ -37,16 +45,6 @@ export default function EmployeeTable({ data }: { data: Employee[] }) {
         return (pageIndex * pageSize + rowIndex + 1).toString();
       },
       enableSorting: false,
-      enableHiding: false,
-    },
-    {
-      accessorKey: "id",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Task ID" />
-      ),
-      cell: ({ row }) => (
-        <div className="font-medium">{row.getValue("id")}</div>
-      ),
       enableHiding: false,
     },
     {
@@ -65,6 +63,15 @@ export default function EmployeeTable({ data }: { data: Employee[] }) {
       ),
       cell: ({ row }) => (
         <div className="max-w-[500px]">{row.getValue("email")}</div>
+      ),
+    },
+    {
+      accessorKey: "position",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Position" />
+      ),
+      cell: ({ row }) => (
+        <div className="max-w-[500px]">{row.getValue("position")}</div>
       ),
     },
     {
@@ -97,7 +104,8 @@ export default function EmployeeTable({ data }: { data: Employee[] }) {
         <DataTableColumnHeader column={column} title="Date Join" />
       ),
       cell: ({ row }) => {
-        return <div>{row.getValue<Date>("dateJoin").toLocaleDateString()}</div>;
+        const date = new Date(row.getValue("dateJoin"));
+        return <div>{format(date, "MMM dd, yyyy")}</div>;
       },
       sortingFn: "datetime",
     },

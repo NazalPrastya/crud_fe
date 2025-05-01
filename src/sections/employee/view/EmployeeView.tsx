@@ -1,110 +1,26 @@
 "use client";
 
-import { useState } from "react";
 import { Users, ChartNoAxesCombined } from "lucide-react";
 import CardTotal from "@/components/custom/stats/card-total";
-import { Employee } from "../employee-type";
 import EmployeeTable from "../employee-table";
-import EmployeeForm from "../employee-form-create";
+import { useQuery } from "@tanstack/react-query";
+import { axiosInstance } from "@/lib/axios";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
-const tasks: Employee[] = [
-  {
-    id: "TASK-8782",
-    name: "Create new landing page",
-    email: "nar3S@example.com",
-    position: "tess",
-    level: "Junior",
-    dateJoin: new Date("2023-05-04"),
-  },
-  {
-    id: "TASK-8722",
-    name: "Create new landing page",
-    email: "nar3S@example.com",
-    position: "tess",
-    level: "Mid",
-    dateJoin: new Date("2023-05-04"),
-  },
-  {
-    id: "TASK-8721",
-    name: "Create new landing page",
-    email: "nar3S@example.com",
-    position: "tess",
-    level: "Senior",
-
-    dateJoin: new Date("2023-05-04"),
-  },
-  {
-    id: "TASK-8741",
-    name: "Create new landing page",
-    email: "nar3S@example.com",
-    position: "tess",
-    level: "Mid",
-
-    dateJoin: new Date("2023-05-04"),
-  },
-  {
-    id: "TASK-8751",
-    name: "Create new landing page",
-    email: "nar3S@example.com",
-    position: "tess",
-    level: "Junior",
-
-    dateJoin: new Date("2023-05-04"),
-  },
-  {
-    id: "TASK-8712",
-    name: "Create new landing page",
-    email: "nar3S@example.com",
-    position: "tess",
-    level: "Mid",
-
-    dateJoin: new Date("2023-05-04"),
-  },
-  {
-    id: "TASK-8712",
-    name: "Create new landing page",
-    email: "nar3S@example.com",
-    position: "tess",
-    level: "Mid",
-    dateJoin: new Date("2023-05-04"),
-  },
-  {
-    id: "TASK-8712",
-    name: "Create new landing page",
-    email: "nar3S@example.com",
-    position: "tess",
-    level: "Junior",
-    dateJoin: new Date("2023-05-04"),
-  },
-  {
-    id: "TASK-8712",
-    name: "Create new landing page",
-    email: "nar3S@example.com",
-    position: "tess",
-    level: "Senior",
-    dateJoin: new Date("2023-05-04"),
-  },
-  {
-    id: "TASK-8712",
-    name: "Create new landing page",
-    email: "nar3S@example.com",
-    position: "tess",
-    level: "Senior",
-
-    dateJoin: new Date("2023-05-04"),
-  },
-  {
-    id: "TASK-8712",
-    name: "Create new landing page",
-    email: "nar3S@example.com",
-    position: "tess",
-    level: "Junior",
-    dateJoin: new Date("2023-05-04"),
-  },
-];
+async function fetchPositions() {
+  const res = await axiosInstance.get(`/v1/employee`);
+  return res.data;
+}
 
 export default function EmployeeView() {
-  const [data] = useState<Employee[]>(tasks);
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["positions"],
+    queryFn: fetchPositions,
+    refetchOnWindowFocus: true,
+  });
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error.message}</div>;
 
   return (
     <div className="p-6">
@@ -112,23 +28,23 @@ export default function EmployeeView() {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <CardTotal
           title="Total Employee"
-          amount="300"
-          percentageChange={20.1}
+          amount={data.data.meta.total}
           icon={Users}
         />
         <CardTotal
           title="Overall Score"
-          amount="1,234"
-          percentageChange={12.5}
+          amount={data.data.meta.total}
           icon={ChartNoAxesCombined}
         />
       </div>
 
       <div className="mt-6">
-        <div className="flex items-center justify-end gap-x-3 mb-4">
-          <EmployeeForm />
+        <div className="flex justify-end mb-4">
+          <Button asChild>
+            <Link href="/dashboard/employee/create">Add Employee</Link>
+          </Button>
         </div>
-        <EmployeeTable data={data} />
+        <EmployeeTable data={data.data.data} />
       </div>
     </div>
   );

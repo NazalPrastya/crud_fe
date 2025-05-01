@@ -5,7 +5,6 @@ import { ElementType } from "react";
 interface CardTotalProps {
   title: string;
   amount: string;
-  percentageChange: number;
   period?: string;
   className?: string;
   icon?: ElementType;
